@@ -9,8 +9,8 @@
   <script>
     const words = new Set(["honeypot", "neophyte", "phenotype", "eyeteeth", "eyetooth", "honey", "hooey", "hoppy", "hype", "hyphen", "hypo", "netty", "penny", "peony", "peppy", "petty", "peyote", "phony", "phooey", "pony", "poppy", "potty", "python", "teeny", "they", "tony", "toothy", "type", "typhoon", "typo", "yente", "yoohoo"]);
 
-    const mainLetter = "y";
-    const letters = ["h", "o", "n", "e", "p", "t"]; // first letter 
+    var letters = ["h", "o", "n", "e", "y", "p", "t", "←","↻"]; // first letter 
+    var freeSpots = [0, 1, 2, 3, 5, 6, 7];
 
     var config = {
       type: Phaser.WEBGL,
@@ -27,6 +27,8 @@
     };
 
     var game = new Phaser.Game(config);
+    var squares = [];
+    var textBoxes = [];
     const gameState = {
       
     };
@@ -34,19 +36,15 @@
     function preload ()
     {
      this.load.image('square', 'assets/square.png');
-     this.load.image('center', 'assets/center.png');
    }
 
    function create ()
    {
     // make grid
     var width = 300;
-    var height = 0; 
+    var height = 100; 
     for(i = 0; i < 9; i++){
       var image = 'square';
-      if(i == 4) {
-        image = 'center';
-      }
       if(i % 3 == 0) {
         width = 300;
         height += 105;
@@ -55,9 +53,67 @@
         width += 105;
       }
       const square = this.add.sprite(width, height, image);
-      console.log(width, height);
+      if(i == 4) {
+        square.tint = 0xDABBCB;
+      }
+      var text = this.add.text(square.x - 15, square.y - 30, letters[i], { font: "55px Karla", fill: '#000000' });
+      square.setInteractive();
+      squares.push(square);
     }
+    // don't look at this plz, so dumb but i'm in a rush, will fix later
+    // loop doesn't work because it looks up last value of i when it calls the function
+        squares[0].on('pointerup', function() {
+        enterLetter(0);
+      });
+        squares[1].on('pointerup', function() {
+        enterLetter(1);
+      });
+        squares[2].on('pointerup', function() {
+        enterLetter(2);
+      });
+        squares[3].on('pointerup', function() {
+        enterLetter(3);
+      });
+        squares[4].on('pointerup', function() {
+        enterLetter(4);
+      });
+        squares[5].on('pointerup', function() {
+        enterLetter(5);
+      });
+        squares[6].on('pointerup', function() {
+        enterLetter(6);
+      });
+        squares[7].on('pointerup', function() {
+        enterLetter(7);
+      });
+        squares[8].on('pointerup', function() {
+        enterLetter(8);
+      });
+    }
+  
 
+  function enterLetter(i) {
+    if(i == 7) {
+      back();
+    }
+    else if (i == 8) {
+      shuffle();
+    }
+    else {
+      addLetter(letters[i]);
+    }
+  }
+
+  function back() {
+    console.log('back');
+  }
+
+  function shuffle() {
+    console.log('shuffle');
+  }
+
+  function addLetter(letter) {
+    console.log(letter);
   }
 
 

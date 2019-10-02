@@ -9,8 +9,8 @@
   <script>
     const words = new Set(["honeypot", "neophyte", "phenotype", "eyeteeth", "eyetooth", "honey", "hooey", "hoppy", "hype", "hyphen", "hypo", "netty", "penny", "peony", "peppy", "petty", "peyote", "phony", "phooey", "pony", "poppy", "potty", "python", "teeny", "they", "tony", "toothy", "type", "typhoon", "typo", "yente", "yoohoo"]);
 
-    var letters = ["h", "o", "n", "e", "y", "p", "t", "←","↻"]; // first letter 
-    var freeSpots = [0, 1, 2, 3, 5, 6, 7];
+    var letters = ["h", "o", "n", "e", "y", "p", "t", "←","↻ "]; // first letter 
+    var freeLetters = ["h", "o", "n", "e","p", "t"];
 
     var config = {
       type: Phaser.WEBGL,
@@ -18,7 +18,6 @@
       height: 1000,
       backgroundColor: "FFFFFF",
 
-      parent: 'phaser-example',
       scene: {
         preload: preload,
         create: create,
@@ -109,7 +108,15 @@
   }
 
   function shuffle() {
-    console.log('shuffle');
+    Phaser.Utils.Array.Shuffle(freeLetters);
+    // what a mess
+    for(i = 0; i < 4; i++) {
+      letters[i] = freeLetters[i];
+    }
+    for(i = 5; i < 7; i++) {
+      letters[i] = freeLetters[i-1]
+    }
+    console.log(letters);
   }
 
   function addLetter(letter) {

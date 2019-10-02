@@ -46,15 +46,19 @@
     var bankHeight = 50;
     var bankWidth = 670;
     var bank;
+    var highlight;
 
     function preload ()
     {
      this.load.image('square', 'assets/square.png');
      this.load.image('submit', 'assets/submit.png');
+     this.load.image('highlight', 'assets/highlight.png');
    }
 
    function create ()
    {
+
+    highlight = this.add.sprite(285, 648, 'highlight');
 
     bank = this.add.text(bankWidth, bankHeight, wordBankwords, { font: "30px Karla", fill: '#000000'});
     camera = this.cameras.main;
@@ -75,7 +79,7 @@
     scoreText = this.add.text(250, 560, "score: 0", { font: "25px Karla", fill: '#000000'});
     rankText = this.add.text(250, 590, "rank: beginner", { font: "25px Karla", fill: '#000000'});
     rankString = "beginner・good start・solid\n nice・great・amazing・genius";
-    var ranks = this.add.text(250, 635, rankString, { font: "15px Karla", fill: '#000000'});
+    var ranks = this.add.text(250, 635, rankString, { font: "18px Karla", fill: '#000000'});
 
     // make grid
     var width = 300;
@@ -210,12 +214,13 @@
       var bonusScore = calculateBonus(string);
       if(isPangram(string)) {
         bonusScore += 7;
-        bonus.visible = true;
         bonus.setText("Pangram! +" + bonusScore + "!");
+
       }
       else {
         bonus.setText("+" + bonusScore + "!");
       }
+      bonus.visible = true;
       score += bonusScore;
       scoreText.setText("score: " + score);
       var rank = calculateRank();
@@ -232,27 +237,39 @@
   function calculateRank() {
     // total possible = 156
     if(score < 2) {
+      highlight.x = 285;
+      highlight.y = 648;
+      highlight.refreshbody();
       return "beginner";
     }
      if(score < 6) {
+      highlight.x = 380;
+      highlight.y = 648;
       return "good start";
     }
      if(score < 9) {
-      return "good";
-    }
-     if(score < 17) {
+      highlight.x = 465;
+      highlight.y = 648;
       return "solid";
     }
-     if(score < 29) {
+     if(score < 17) {
+      highlight.x = 275;
+      highlight.y = 668;
       return "nice";
     }
-     if(score < 46) {
+     if(score < 29) {
+      highlight.x = 325;
+      highlight.y = 668;
       return "great";
     }
-     if(score < 58) {
+     if(score < 46) {
+      highlight.x = 400;
+      highlight.y = 668;
       return "amazing";
     }
-     if(score < 81) {
+     if(score < 58) {
+      highlight.x = 485;
+      highlight.y = 668;
       return "genius";
     }
   }

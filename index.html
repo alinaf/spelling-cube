@@ -9,12 +9,13 @@
   <script>
     const words = new Set(["honeypot", "neophyte", "phenotype", "eyeteeth", "eyetooth", "honey", "hooey", "hoppy", "hype", "hyphen", "hypo", "netty", "penny", "peony", "peppy", "petty", "peyote", "phony", "phooey", "pony", "poppy", "potty", "python", "teeny", "they", "tony", "toothy", "type", "typhoon", "typo", "yente", "yoohoo"]);
 
-    const letters = ["h", "o", "n", "e", "y", "p", "t"];
+    const mainLetter = "y";
+    const letters = ["h", "o", "n", "e", "p", "t"]; // first letter 
 
     var config = {
       type: Phaser.WEBGL,
-      width: 500,
-      height: 500,
+      width: 1000,
+      height: 1000,
       backgroundColor: "FFFFFF",
 
       parent: 'phaser-example',
@@ -33,11 +34,29 @@
     function preload ()
     {
      this.load.image('square', 'assets/square.png');
-     this.load.image('platform', 'assets/platform.png');
+     this.load.image('center', 'assets/center.png');
    }
 
    function create ()
    {
+    // make grid
+    var width = 300;
+    var height = 0; 
+    for(i = 0; i < 9; i++){
+      var image = 'square';
+      if(i == 4) {
+        image = 'center';
+      }
+      if(i % 3 == 0) {
+        width = 300;
+        height += 105;
+      }
+      else {
+        width += 105;
+      }
+      const square = this.add.sprite(width, height, image);
+      console.log(width, height);
+    }
 
   }
 

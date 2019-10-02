@@ -12,11 +12,10 @@
     var letters = ["n", "t", "p", "e", "y", "o", "h", "←","↻ "]; // first letter 
     var freeLetters = ["h", "o", "n", "e","p", "t"];
     var string = "";
+    var wordBankwords = ""; // hacky
 
     var shakeCamera;
     var graphics;
-
-
 
     var config = {
       type: Phaser.WEBGL,
@@ -27,6 +26,9 @@
       scene: {
         preload: preload,
         create: create,
+         extend: {
+            check: check
+        }
       }
     };
 
@@ -35,7 +37,12 @@
     var textBoxes = [];
     var currentWord;
     var camera;
-
+    var score = 0;
+    var scoreText;
+    var bonus;
+    var bankHeight = 50;
+    var bankWidth = 670;
+    var bank;
 
     function preload ()
     {
@@ -45,25 +52,24 @@
 
    function create ()
    {
+
+    bank = this.add.text(bankWidth, bankHeight, wordBankwords, { font: "30px Karla", fill: '#000000'});
     camera = this.cameras.main;
-
-    // this.cameras.main.setViewport(5, 5, 1000, 1000);
-
-
-    // shakeCamera = this.cameras.add(405, 305, 390, 290);
-    // shakeCamera.shake(300);
-
-
-    currentWord = this.add.text(405, 75, "", { font: "70px Karla", fill: '#000000' });
+    currentWord = this.add.text(405, 85, "", { font: "70px Karla", fill: '#000000' });
     currentWord.setOrigin(0.5);
 
     const submit = this.add.sprite(400, 515, 'submit');
-    // var submit = this.add.text(330, 485, "submit", { font: "40px Karla", fill: '#F5C50B' });
     submit.setInteractive();
 
     submit.on('pointerup', function() {
-      check();
+      if(string.length > 0){
+        check();
+      }
     });
+
+    bonus = this.add.text(405, 20, "", { font: "30px Karla", fill: '#000000'});
+    bonus.setOrigin(0.5);
+    scoreText = this.add.text(250, 560, "score: ", { font: "25px Karla", fill: '#000000'});
 
     // make grid
     var width = 300;
@@ -182,20 +188,45 @@
 
     if (bad) {
       currentWord.setText(message);
-      camera.shake(1000, 0.005);
-      await sleep(1000);
+      camera.shake(1200, 0.003);
+      await sleep(1200);
       currentWord.setText(string);
       return;
     }
     else {
-      currentWord.setText("nice!");
       currentWord.fill = '0xF5C50B';
-      await sleep(1000);
+      var bonusScore = calculateBonus(string);
+      if(isPangram(string)) {
+        bonusScore += 7;
+        bonus.setText("Pangram! +" + bonusScore + "!");
+      }
+      else {
+        bonus.setText("+" + bonusScore + "!");
+      }
+      await sleep(600);
+      wordBankwords += ("\n" + string);
+      bank.setText(wordBankwords);
       string = "";
       currentWord.setText(string);
     }
   }
 
+  function calculateBonus(word) {
+    if(word.length == 4) {
+      return 1;
+    }
+
+    return word.length;
+  }
+
+  function isPangram(word) {
+    for(i = 0; i < letters.length - 2; i++) {
+      if(!word.includes(letters[i])) {
+        return false;
+      }
+    }
+    return true;
+  }
 
   function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));

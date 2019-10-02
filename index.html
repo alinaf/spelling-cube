@@ -13,6 +13,7 @@
     var freeLetters = ["h", "o", "n", "e","p", "t"];
     var string = "";
     var wordBankwords = ""; // hacky
+    var submitted = new Set([]);
 
     var shakeCamera;
     var graphics;
@@ -39,6 +40,8 @@
     var camera;
     var score = 0;
     var scoreText;
+    var rankText;
+
     var bonus;
     var bankHeight = 50;
     var bankWidth = 670;
@@ -69,7 +72,10 @@
 
     bonus = this.add.text(405, 20, "", { font: "30px Karla", fill: '#000000'});
     bonus.setOrigin(0.5);
-    scoreText = this.add.text(250, 560, "score: ", { font: "25px Karla", fill: '#000000'});
+    scoreText = this.add.text(250, 560, "score: 0", { font: "25px Karla", fill: '#000000'});
+    rankText = this.add.text(250, 590, "rank: beginner", { font: "25px Karla", fill: '#000000'});
+    rankString = "beginner・good start・solid\n nice・great・amazing・genius";
+    var ranks = this.add.text(250, 635, rankString, { font: "15px Karla", fill: '#000000'});
 
     // make grid
     var width = 300;
@@ -99,7 +105,7 @@
       square.setInteractive();
       squares.push(square);
     }
-    // don't look at this plz, so dumb but i'm in a rush, will fix later
+    // avert ur eyes, so dumb but i'm in a rush, will fix later
     // loop doesn't work because it looks up last value of i when it calls the function
     squares[0].on('pointerup', function() {
       enterLetter(0);
@@ -186,28 +192,68 @@
       bad = true;
     }
 
+    else if (submitted.has(string)) {
+      message = "already used";
+      bad = true;
+    }
+
     if (bad) {
       currentWord.setText(message);
-      camera.shake(1200, 0.003);
-      await sleep(1200);
+      camera.shake(1000, 0.003);
+      await sleep(1000);
       currentWord.setText(string);
       return;
     }
     else {
+      submitted.add(string);
       currentWord.fill = '0xF5C50B';
       var bonusScore = calculateBonus(string);
       if(isPangram(string)) {
         bonusScore += 7;
+        bonus.visible = true;
         bonus.setText("Pangram! +" + bonusScore + "!");
       }
       else {
         bonus.setText("+" + bonusScore + "!");
       }
+      score += bonusScore;
+      scoreText.setText("score: " + score);
+      var rank = calculateRank();
+      rankText.setText("rank: " + rank);
       await sleep(600);
+      bonus.visible = false;
       wordBankwords += ("\n" + string);
       bank.setText(wordBankwords);
       string = "";
       currentWord.setText(string);
+    }
+  }
+
+  function calculateRank() {
+    // total possible = 156
+    if(score < 2) {
+      return "beginner";
+    }
+     if(score < 6) {
+      return "good start";
+    }
+     if(score < 9) {
+      return "good";
+    }
+     if(score < 17) {
+      return "solid";
+    }
+     if(score < 29) {
+      return "nice";
+    }
+     if(score < 46) {
+      return "great";
+    }
+     if(score < 58) {
+      return "amazing";
+    }
+     if(score < 81) {
+      return "genius";
     }
   }
 

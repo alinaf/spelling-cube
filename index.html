@@ -13,6 +13,11 @@
     var freeLetters = ["h", "o", "n", "e","p", "t"];
     var string = "";
 
+    var shakeCamera;
+    var graphics;
+
+
+
     var config = {
       type: Phaser.WEBGL,
       width: 1000,
@@ -29,19 +34,31 @@
     var squares = [];
     var textBoxes = [];
     var currentWord;
+    var camera;
+
 
     function preload ()
     {
      this.load.image('square', 'assets/square.png');
+     this.load.image('submit', 'assets/submit.png');
    }
 
    function create ()
    {
+    camera = this.cameras.main;
+
+    // this.cameras.main.setViewport(5, 5, 1000, 1000);
+
+
+    // shakeCamera = this.cameras.add(405, 305, 390, 290);
+    // shakeCamera.shake(300);
+
 
     currentWord = this.add.text(405, 75, "", { font: "70px Karla", fill: '#000000' });
     currentWord.setOrigin(0.5);
 
-    var submit = this.add.text(330, 485, "submit", { font: "40px Karla", fill: '#F5C50B' });
+    const submit = this.add.sprite(400, 515, 'submit');
+    // var submit = this.add.text(330, 485, "submit", { font: "40px Karla", fill: '#F5C50B' });
     submit.setInteractive();
 
     submit.on('pointerup', function() {
@@ -144,17 +161,44 @@
   }
 
 
-  function check ()
+  async function check ()
   {
-    if (words.has(string)) {
-      console.log('yay');
+    var bad = false;
+    var message = "";
+    if(string.length <= 3) {
+      message = "too short";
+      bad = true;
+    }
+
+    else if(!string.includes(letters[4])) {
+      message = "missing " + "'" + letters[4] + "'";
+      bad = true;
+    }
+
+    else if (!words.has(string)) {
+      message = "invalid word";
+      bad = true;
+    }
+
+    if (bad) {
+      currentWord.setText(message);
+      camera.shake(1000, 0.005);
+      await sleep(1000);
+      currentWord.setText(string);
+      return;
     }
     else {
-      console.log('boo');
+      currentWord.setText("nice!");
+      currentWord.fill = '0xF5C50B';
+      await sleep(1000);
+      string = "";
+      currentWord.setText(string);
     }
-    string = "";
-    currentWord.setText(string);
+  }
 
+
+  function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
   }
 
 
